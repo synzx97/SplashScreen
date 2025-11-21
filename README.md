@@ -1,1 +1,2 @@
-# SplashScreen
+# SplashScreen animation KDE with live video
+
