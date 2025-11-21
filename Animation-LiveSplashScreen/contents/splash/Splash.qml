@@ -9,11 +9,15 @@ Item {
     
     // Timing controls
     property int stage: 0
-    property real phase1Duration: 2.5  // logo + loading phase (detik)
-    property real phase2Duration: 3.0  // video phase (detik)
-    property real transitionDuration: 0.8  // durasi transisi antar fase (detik)
+    property real phase1Duration: 2.5
+    property real phase2Duration: 1.5
+    property real transitionDuration: 1
     
-    // Background hitam solid
+    // Blur control properties (accessible from anywhere)
+    property real phase1BlurAmount: 0
+    property real phase2BlurAmount: 32
+    
+    // Background black solid
     Rectangle {
         anchors.fill: parent
         color: "#000000"
@@ -106,16 +110,16 @@ Item {
         // Blur effect untuk transisi
         layer.enabled: true
         layer.effect: FastBlur {
-            id: phase1Blur
-            radius: 0
+            radius: phase1BlurAmount
             transparentBorder: true
-            
-            Behavior on radius {
-                NumberAnimation { 
-                    duration: transitionDuration * 1000
-                    easing.type: Easing.InOutQuad
-                }
-            }
+        }
+    }
+    
+    // Smooth animation untuk phase1 blur
+    Behavior on phase1BlurAmount {
+        NumberAnimation { 
+            duration: transitionDuration * 1000
+            easing.type: Easing.InOutQuad
         }
     }
     
@@ -142,7 +146,6 @@ Item {
             
             onError: {
                 console.log("MediaPlayer error:", errorString)
-                // Fallback: langsung finish jika video error
                 finishSplash()
             }
         }
@@ -157,16 +160,16 @@ Item {
         // Blur effect untuk transisi
         layer.enabled: true
         layer.effect: FastBlur {
-            id: phase2Blur
-            radius: 32
+            radius: phase2BlurAmount
             transparentBorder: true
-            
-            Behavior on radius {
-                NumberAnimation { 
-                    duration: transitionDuration * 1000
-                    easing.type: Easing.InOutQuad
-                }
-            }
+        }
+    }
+    
+    // Smooth animation untuk phase2 blur
+    Behavior on phase2BlurAmount {
+        NumberAnimation { 
+            duration: transitionDuration * 1000
+            easing.type: Easing.InOutQuad
         }
     }
     
@@ -225,8 +228,12 @@ Item {
                 duration: transitionDuration * 1000
                 easing.type: Easing.InOutQuad
             }
-            ScriptAction {
-                script: phase1Blur.radius = 32
+            NumberAnimation {
+                target: root
+                property: "phase1BlurAmount"
+                to: 32
+                duration: transitionDuration * 1000
+                easing.type: Easing.InOutQuad
             }
         }
         
@@ -247,14 +254,26 @@ Item {
                 duration: transitionDuration * 1000
                 easing.type: Easing.OutCubic
             }
-            ScriptAction {
-                script: phase2Blur.radius = 0
+            NumberAnimation {
+                target: root
+                property: "phase2BlurAmount"
+                to: 0
+                duration: transitionDuration * 1000
+                easing.type: Easing.InOutQuad
             }
         }
         
         onStarted: {
             console.log("Starting transition to video")
+            console.log("Phase2 blur start:", phase2BlurAmount)
             player.play()
+        }
+        
+        onStopped: {
+            console.log("Transition complete")
+            console.log("Phase2 blur end:", phase2BlurAmount)
+            // Start phase 2 timer
+            phase2Timer.start()
         }
     }
     
@@ -317,8 +336,6 @@ Item {
     function startPhase1() {
         console.log("Starting Phase 1: Logo + Loading")
         logoIntroAnim.start()
-        
-        // Delay progress bar untuk lebih natural
         progressFadeInTimer.start()
     }
     
@@ -356,7 +373,7 @@ Item {
     
     // ==================== DEBUG MODE ====================
     
-    // Auto-start untuk qmlscene testing
+    
     Timer {
         id: debugAutoStart
         interval: 500
@@ -368,7 +385,7 @@ Item {
         }
     }
     
-    // Click to skip phases
+    
     MouseArea {
         anchors.fill: parent
         onClicked: {
@@ -388,5 +405,6 @@ Item {
         console.log("Phase 1 duration:", phase1Duration, "seconds")
         console.log("Phase 2 duration:", phase2Duration, "seconds")
         console.log("Transition duration:", transitionDuration, "seconds")
+        console.log("Initial phase2BlurAmount:", phase2BlurAmount)
     }
 }
