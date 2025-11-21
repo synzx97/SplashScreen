@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=Arch SplashScreen
+Comment=Custom splash screen by Synzx
+Encoding=UTF-8
+Keywords=SplashScreen;Workspace;Appearance;Look and Feel;Logout;Lock;Suspend;Shutdown;Hibernate;
+
+Type=Service
+Id=com.synzx97.splashscreen
+
+X-KDE-ServiceTypes=Plasma/LookAndFeel
+X-KDE-PluginInfo-Author=synzx97
+X-KDE-PluginInfo-License=MIT
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Name=com.synzx97.splashscreen
+
