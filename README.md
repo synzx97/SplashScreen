@@ -6,5 +6,7 @@ This SplashScreen consists of two phases:
 - Phase 2 – Plays a live video (or live wallpaper) right before entering the desktop.
 
 ## Priviews 
-- Phase 1: 
-- Phase 2:
+![Phase 1 Preview](Animation-LiveSplashScreen/contents/previews/Phase 1.png)
+
+![Phase 2 Preview](Animation-LiveSplashScreen/contents/previews/Phase 2.png)
+
